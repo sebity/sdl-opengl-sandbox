@@ -11,9 +11,13 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <vector>
-#include "../JTEngine/GLSLProgram.h"
-#include "../JTEngine/GLTexture.h"
-#include "../JTEngine/Sprite.h"
+
+#include <JTEngine/JTEngine.h>
+#include <JTEngine/GLSLProgram.h>
+#include <JTEngine/GLTexture.h>
+#include <JTEngine/Sprite.h>
+#include <JTEngine/Window.h>
+
 
 enum class GameState {PLAY, EXIT};
 
@@ -24,9 +28,6 @@ public:
 
 	void run();
 
-
-
-
 private:
 	void initSystems();
 	void initShaders();
@@ -35,19 +36,21 @@ private:
 	void drawGame();
 	void calculateFPS();
 
-	SDL_Window* _window;
+	JTEngine::Window _window;
 	int _screenWidth;
 	int _screenHeight;
 	GameState _gameState;
 
-	std::vector<Sprite*> _sprites;
+	std::vector<JTEngine::Sprite*> _sprites;
 
-	GLSLProgram _colorProgram;
+	JTEngine::GLSLProgram _colorProgram;
 
 	float _fps;
 	float _maxFPS;
 	float _frameTime;
 	float _time;
+
+
 
 };
 

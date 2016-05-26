@@ -5,17 +5,15 @@
  *      Author: jan
  */
 
-#include "MainGame.h"
 #include <iostream>
 #include <typeinfo>
-#include "../JTEngine/Errors.h"
-#include "../JTEngine/Sprite.h"
 
+#include "MainGame.h"
+#include <JTEngine/Errors.h>
 
 // Constructor, initialises private member variables.
 //
 MainGame::MainGame() :
-	_window(nullptr),
 	_screenWidth(1024),
 	_screenHeight(768),
 	_gameState(GameState::PLAY),
@@ -23,7 +21,6 @@ MainGame::MainGame() :
 	_maxFPS(60.0f),
 	_frameTime(0.0f),
 	_time(0.0f) {
-
 }
 
 // Destructor.
@@ -38,16 +35,11 @@ MainGame::~MainGame() {
 void MainGame::run() {
 	initSystems();
 
-	_sprites.push_back(new Sprite());
+	_sprites.push_back(new JTEngine::Sprite());
 	_sprites.back()->init(-1.0f, -1.0f, 1.0f, 1.0f, "Textures/JimmyJumpPack/CharacterRight_Standing.png");
 
-	_sprites.push_back(new Sprite());
+	_sprites.push_back(new JTEngine::Sprite());
 	_sprites.back()->init(0.0f, -1.0f, 1.0f, 1.0f, "Textures/JimmyJumpPack/CharacterRight_Standing.png");
-
-	for (int i = 0; i < 1000; i++) {
-		_sprites.push_back(new Sprite());
-		_sprites.back()->init(-1.0f, 0.0f, 1.0f, 1.0f, "Textures/JimmyJumpPack/CharacterRight_Standing.png");
-	}
 
 	gameLoop();
 }
@@ -56,39 +48,9 @@ void MainGame::run() {
 // Initialises SDL and OpenGL as well as whatever else is needed.
 //
 void MainGame::initSystems() {
-	// Initialise SDL
-	SDL_Init(SDL_INIT_EVERYTHING);
+	JTEngine::init();
 
-	// Enable double buffering to stop any flickering on the screen.
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	// Open an SDL window
-	_window = SDL_CreateWindow("Graphics Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			_screenWidth, _screenHeight, SDL_WINDOW_OPENGL);
-	if(_window == nullptr) {
-		fatalError("SDL Window could not be created!");
-	}
-
-	// Setup the OpenGL context
-	SDL_GLContext glContext = SDL_GL_CreateContext(_window);
-	if(glContext == nullptr) {
-		fatalError("SDL_GL context could not be created!");
-	}
-
-	// Setup the GLEW
-	GLenum error = glewInit();
-	if(error != GLEW_OK) {
-		fatalError("Could not initialise glew!");
-	}
-
-	// Check the OpenGL version
-	std::cout << "*** OpenGL Version: " << glGetString(GL_VERSION) << " ***";
-
-	// Set the background color.
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-
-	// Set VSYNC
-	SDL_GL_SetSwapInterval(0);
+	_window.create("Game Engine", _screenWidth, _screenHeight, 0);
 
 	initShaders();
 }
@@ -185,7 +147,7 @@ void MainGame::drawGame() {
 	// disable the shader
 	_colorProgram.unuse();
 
-	SDL_GL_SwapWindow(_window);
+	_window.swapBuffer();
 }
 
 void MainGame::calculateFPS() {
