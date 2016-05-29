@@ -17,6 +17,7 @@
 #include <JTEngine/GLTexture.h>
 #include <JTEngine/Sprite.h>
 #include <JTEngine/Window.h>
+#include <JTEngine/Camera2D.h>
 
 
 enum class GameState {PLAY, EXIT};
@@ -44,6 +45,7 @@ private:
 	std::vector<JTEngine::Sprite*> _sprites;
 
 	JTEngine::GLSLProgram _colorProgram;
+	JTEngine::Camera2D _camera;
 
 	float _fps;
 	float _maxFPS;
