@@ -18,6 +18,7 @@
 #include <JTEngine/Sprite.h>
 #include <JTEngine/Window.h>
 #include <JTEngine/Camera2D.h>
+#include <JTEngine/SpriteBatch.h>
 
 
 enum class GameState {PLAY, EXIT};
@@ -42,10 +43,10 @@ private:
 	int _screenHeight;
 	GameState _gameState;
 
-	std::vector<JTEngine::Sprite*> _sprites;
-
 	JTEngine::GLSLProgram _colorProgram;
 	JTEngine::Camera2D _camera;
+
+	JTEngine::SpriteBatch _spriteBatch;
 
 	float _fps;
 	float _maxFPS;

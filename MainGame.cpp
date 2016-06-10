@@ -10,6 +10,7 @@
 
 #include "MainGame.h"
 #include <JTEngine/Errors.h>
+#include <JTEngine/ResourceManager.h>
 
 // Constructor, initialises private member variables.
 //
@@ -37,12 +38,6 @@ MainGame::~MainGame() {
 void MainGame::run() {
 	initSystems();
 
-	_sprites.push_back(new JTEngine::Sprite());
-	_sprites.back()->init(0.0f, 0.0f, _screenWidth/2, _screenWidth/2, "Textures/JimmyJumpPack/CharacterRight_Standing.png");
-
-	_sprites.push_back(new JTEngine::Sprite());
-	_sprites.back()->init(_screenWidth/2, 0.0f, _screenWidth/2, _screenWidth/2, "Textures/JimmyJumpPack/CharacterRight_Standing.png");
-
 	gameLoop();
 }
 
@@ -55,6 +50,8 @@ void MainGame::initSystems() {
 	_window.create("Game Engine", _screenWidth, _screenHeight, 0);
 
 	initShaders();
+
+	_spriteBatch.init();
 }
 
 
@@ -173,9 +170,25 @@ void MainGame::drawGame() {
 
 	glUniformMatrix4fv(pLocation, 1, GL_FALSE, &(cameraMatrix[0][0]));
 
-	for(unsigned int i = 0; i < _sprites.size(); i++) {
-		_sprites[i]->draw();
+	_spriteBatch.begin();
+
+	glm::vec4 pos(0.0f ,0.0f, 50.0f, 50.0f);
+	glm::vec4 uv(0.0f, 0.0f, 1.0f, 1.0f);
+	JTEngine::GLTexture texture = JTEngine::ResourceManager::getTexture("Textures/JimmyJumpPack/CharacterRight_Standing.png");
+	JTEngine::Color color;
+	color.r = 255;
+	color.g = 255;
+	color.b = 255;
+	color.a = 255;
+
+	for (int i = 0; i < 1000; i++) {
+		_spriteBatch.draw(pos, uv, texture.id, 0.0f, color);
+		_spriteBatch.draw(pos + glm::vec4(50, 0, 0, 0), uv, texture.id, 0.0f, color);
 	}
+	_spriteBatch.end();
+
+
+	_spriteBatch.renderBatch();
 
 	// Unbind the texture
 	glBindTexture(GL_TEXTURE_2D, 0);
