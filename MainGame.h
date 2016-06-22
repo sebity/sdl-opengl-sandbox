@@ -19,6 +19,8 @@
 #include <JTEngine/Window.h>
 #include <JTEngine/Camera2D.h>
 #include <JTEngine/SpriteBatch.h>
+#include <JTEngine/InputManager.h>
+#include <JTEngine/Timing.h>
 
 
 enum class GameState {PLAY, EXIT};
@@ -47,6 +49,9 @@ private:
 	JTEngine::Camera2D _camera;
 
 	JTEngine::SpriteBatch _spriteBatch;
+
+	JTEngine::InputManager _inputManager;
+	JTEngine::FpsLimiter _fpsLimiter;
 
 	float _fps;
 	float _maxFPS;
