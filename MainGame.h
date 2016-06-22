@@ -21,6 +21,7 @@
 #include <JTEngine/SpriteBatch.h>
 #include <JTEngine/InputManager.h>
 #include <JTEngine/Timing.h>
+#include "Bullet.h"
 
 
 enum class GameState {PLAY, EXIT};
@@ -52,6 +53,8 @@ private:
 
 	JTEngine::InputManager _inputManager;
 	JTEngine::FpsLimiter _fpsLimiter;
+
+	std::vector<Bullet> _bullets;
 
 	float _fps;
 	float _maxFPS;

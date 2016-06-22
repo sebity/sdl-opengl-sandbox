@@ -79,6 +79,16 @@ void MainGame::gameLoop() {
 
 		_camera.update();
 
+		for (int i = 0; i < _bullets.size();) {
+			if(_bullets[i].update() == true) {
+				_bullets[i] = _bullets.back();
+				_bullets.pop_back();
+			}
+			else {
+				i++;
+			}
+		}
+
 		drawGame();
 
 		_fps = _fpsLimiter.end();
@@ -86,7 +96,7 @@ void MainGame::gameLoop() {
 		// print only once every 10 frames
 		static int frameCounter = 0;
 		frameCounter++;
-		if(frameCounter == 10) {
+		if(frameCounter == 10000) {
 			std::cout << _fps << std::endl;
 			frameCounter = 0;
 		}
@@ -109,7 +119,7 @@ void MainGame::processInput() {
 			_gameState = GameState::EXIT;
 			break;
 		case SDL_MOUSEMOTION:
-			//std::cout << e.motion.x << " " << e.motion.y << std::endl;
+			_inputManager.setMouseCoords(e.motion.x, e.motion.y);
 			break;
 		case SDL_KEYDOWN:
 			_inputManager.pressKey(e.key.keysym.sym);
@@ -118,6 +128,13 @@ void MainGame::processInput() {
 		case SDL_KEYUP:
 			_inputManager.releaseKey(e.key.keysym.sym);
 			break;
+		case SDL_MOUSEBUTTONDOWN:
+			_inputManager.pressKey(e.button.button);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			_inputManager.releaseKey(e.button.button);
+			break;
+
 		}
 	}
 
@@ -145,6 +162,16 @@ void MainGame::processInput() {
 		_camera.setScale(_camera.getScale() - SCALE_SPEED);
 	}
 
+	if(_inputManager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		glm::vec2 mouseCoords = _inputManager.getMouseCoords();
+		mouseCoords = _camera.convertScreenToWorld(mouseCoords);
+
+		glm::vec2 playerPosition(0.0f);
+		glm::vec2 direction = mouseCoords - playerPosition;
+		direction = glm::normalize(direction);
+
+		_bullets.emplace_back(playerPosition, direction, 2.0f, 500);
+	}
 }
 
 
@@ -167,10 +194,6 @@ void MainGame::drawGame() {
 	// Tell the shader that the texture is in texture unit 0
 	glUniform1i(textureLocation, 0);
 
-	// Set the constantly changing time variable
-	GLuint timeLocation = _colorProgram.getUniformLocation("time");
-	glUniform1f(timeLocation, _time);
-
 	// Set the camera matrix
 	GLint pLocation = _colorProgram.getUniformLocation("P");
 	glm::mat4 cameraMatrix = _camera.getCameraMatrix();
@@ -188,10 +211,13 @@ void MainGame::drawGame() {
 	color.b = 255;
 	color.a = 255;
 
-	for (int i = 0; i < 10; i++) {
-		_spriteBatch.draw(pos, uv, texture.id, 0.0f, color);
-		_spriteBatch.draw(pos + glm::vec4(50, 0, 0, 0), uv, texture.id, 0.0f, color);
+	// Draw sprite
+	_spriteBatch.draw(pos, uv, texture.id, 0.0f, color);
+
+	for (int i = 0; i < _bullets.size(); i++) {
+		_bullets[i].draw(_spriteBatch);
 	}
+
 	_spriteBatch.end();
 
 
